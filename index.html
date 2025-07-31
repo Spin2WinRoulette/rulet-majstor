@@ -310,8 +310,26 @@
       line-height: 1.6;
     }
   </style>
+  <script>
+    // Lozinka prompt pre prikaza sajta
+    document.addEventListener("DOMContentLoaded", function() {
+      let lozinka = "";
+      while(lozinka !== "ruletko2580"){
+        lozinka = prompt("Unesite lozinku za pristup sajtu:");
+        if(lozinka === null){
+          alert("Pristup odbijen.");
+          document.body.innerHTML = "<h2 style='color:red; text-align:center; margin-top:20vh;'>Pristup sajtu odbijen.</h2>";
+          return;
+        }
+        if(lozinka !== "ruletko2580"){
+          alert("Netačna lozinka!");
+        }
+      }
+    });
+  </script>
 </head>
 <body>
+
   <div class="stars" id="stars"></div>
   <div class="container">
     <header>
@@ -320,7 +338,7 @@
 
 <div class="warning">
 
-  <p>💼 <strong>Preporučeni fond za igru:</strong> 20.000 RSD</p>
+  <p>💼 <strong>Preporučeni fond za igru:</strong> 10.000 RSD</p>
   <p>💥 <strong>Moguća mesečna zarada:</strong> do 500.000 RSD</p>
 
    <p>   ✅ Igra se na SVAKO izvlačenje – program predlaže moguću sledeću kolonu na osnovu istorije brojeva.  </p>
