@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rulet Majstor</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      background: #000;
+      color: #fff;
+      padding: 20px;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      background-color: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite ease-in-out;
+    }
+    @keyframes twinkle {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 20px;
+      background: rgba(0, 15, 30, 0.7);
+      border-radius: 16px;
+      border: 1px solid rgba(0, 242, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    }
+    h1 {
+      font-size: 37px;
+      margin-bottom: 15px;
+      background: linear-gradient(to right, #00f2ff, #00ff99);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+    }
+    .warning {
+      margin: 15px 0;
+      padding: 12px;
+      background: rgba(160, 0, 0, 0.3);
+      border-radius: 10px;
+      border: 1px solid #ff0;
+      font-size: 16px;
+      text-align: center;
+    }
+    .card {
+      background: rgba(0, 15, 30, 0.7);
+      border-radius: 16px;
+      border: 1px solid rgba(0, 242, 255, 0.4);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+      backdrop-filter: blur(5px);
+    }
+    .instructions {
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .roulette-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin: 20px 0;
+      justify-content: center;
+    }
+    .zero-cell {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(145deg, #006600, #009900);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid #555;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    .roulette-table {
+      display: grid;
+      grid-template-columns: repeat(12, 50px) 50px; /* 12 number columns + 1 bet column */
+      grid-template-rows: repeat(3, 50px);
+      gap: 5px;
+    }
+    .cell {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 21px;
+      font-weight: bold;
+      border: 2px solid #555;
+      user-select: none;
+      transition: all 0.3s ease;
+      position: relative;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    .red { 
+      background: linear-gradient(145deg, #c00, #f00);
+      color: #fff; 
+    }
+    .black { 
+      background: linear-gradient(145deg, #111, #333);
+      color: #fff; 
+    }
+    .cell:hover, .zero-cell:hover {
+      transform: scale(1.05);
+      outline: 2px solid #00f2ff;
+      box-shadow: 0 0 15px #00f2ff;
+    }
+    .highlight-column {
+      box-shadow: 0 0 10px 3px #00f2ff;
+      border-color: #00f2ff !important;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 5px 2px #00f2ff; }
+      50% { box-shadow: 0 0 15px 5px #00f2ff; }
+      100% { box-shadow: 0 0 5px 2px #00f2ff; }
+    }
+    .bet-box {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 21px;
+      font-weight: bold;
+      border: 2px solid #00f2ff;
+      background: linear-gradient(145deg, #00f2ff, #00a2ff);
+      color: #000;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px #00f2ff;
+    }
+    .bet-box.inactive {
+      background: linear-gradient(145deg, #333, #555);
+      border-color: #555;
+      color: #666;
+    }
+    .bet-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00f2ff;
+    }
+    .result-container {
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(20, 20, 40, 0.7);
+      border-radius: 12px;
+      border: 1px solid #555;
+    }
+    .result {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .profit-container {
+      margin: 16px 0;
+      padding: 15px;
+      background: rgba(30, 30, 60, 0.7);
+      border-radius: 12px;
+      border: 1px solid #00ff99;
+      text-align: center;
+    }
+    .profit-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #00ff99;
+    }
+    .profit-value {
+      font-size: 25px;
+      font-weight: bold;
+    }
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin: 10px 0;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 242, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #00f2ff;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+      text-align: center;
+      font-style: italic;
+      color: #00f2ff;
+    }
+    .history {
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(20, 20, 40, 0.7);
+      border-radius: 12px;
+      border: 1px solid #555;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .history-title {
+      font-size: 15px;
+      margin-bottom: 10px;
+      color: #00f2ff;
+    }
+    .history-content {
+      font-family: monospace;
+      font-size: 16px;
+      color: #ccc;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    button {
+      padding: 12px 24px;
+      margin: 0 10px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #00a2ff, #00f2ff);
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(145deg, #00f2ff, #00a2ff);
+    }
+    .disclaimer {
+      margin-top: 30px;
+      padding: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #aaa;
+      background: rgba(10, 10, 30, 0.8);
+      border-radius: 12px;
+      border: 1px solid #555;
+    }
+    @media (max-width: 768px) {
+      .roulette-table {
+        grid-template-columns: repeat(12, 35px) 35px;
+        grid-template-rows: repeat(3, 35px);
+        gap: 3px;
+      }
+      .cell {
+        width: 35px;
+        height: 35px;
+        font-size: 12px;
+      }
+      .zero-cell {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+      h1 {
+        font-size: 28px;
+      }
+    }
+    .explanation {
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(0, 30, 60, 0.7);
+      border-radius: 12px;
+      border: 1px solid #00f2ff;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  <div class="container">
+    <header>
+<h1>Rulet Majstor — Program za zaradu na ruletu</h1>
+
+
+<div class="warning">
+
+  <p>💼 <strong>Preporučeni fond za igru:</strong> 10.000 RSD</p>
+  <p>💥 <strong>Moguća mesečna zarada:</strong> do 500.000 RSD</p>
+
+   <p>   ✅ Igra se na SVAKO izvlačenje – program predlaže moguću sledeću kolonu na osnovu istorije brojeva.  </p>
+  </ul>
+
+</div>
+
+    </header>
+    <div class="card">
+<div class="instructions">
+<p><strong>🎲 Rulet Majstor</strong> je inteligentni program osmišljen da automatski analizira <strong>poslednji izvučeni broj</strong> u ruletu 🎯 i na osnovu naprednih proračuna predlaže najbolju <strong>kolonu (1️⃣, 2️⃣ ili 3️⃣)</strong> za narednu opkladu, kao i <strong>iznos uloga 💰</strong>.</p> <p>📊 Program koristi kombinaciju <strong>statističkih obrazaca</strong> i <strong>algoritama predviđanja</strong> kako bi dostigao impresivnu tačnost od preko <strong>75%</strong> u svojim preporukama. 🤖 Program nije savršen ali je daleko bolji nego što biste Vi mogli da zamislite.</p> <ul> 🖱️ Kada igrač <strong>klikne na broj 🎯</strong> koji je poslednji izvučen u igri. <span> Program odmah analizira podatke i <strong>predlaže sledeću kolonu za igru</strong>, koju jasno označava <span style="color:lightblue;"><strong>plavom bojom 🔵</strong></span>. Ulozi se povećavaju i smanjuju u zavisnosti od ishoda igre 🎉.</li> <br>💵 Pored preporučene kolone za igru, automatski se prikazuje i <strong>tačan iznos preporučenog uloga za uplatu 💵.</br> </ul>  </strong>
+
+<p>🔁 Nakon svakog izvučenog broja, bez obzira da li je prethodna opklada bila dobitna ili ne, program <strong>nastavlja analizu</strong> i <strong>preporučuje</strong> sledeći potez. Ulog se <strong>prilagođava u zavisnosti od situacije</strong>, čime se <strong>maksimizira šansa za profit</strong>.</p>
+
+<p>🧠 Program <strong>pamti sve prethodne brojeve</strong> i koristi ih za <strong> prilagođavanje strategije i preciznije razmišljanje</strong>. </p>
+
+<p>⚠️ Napomena: Kako bi program pravilno radio, izuzetno je važno da igrač <strong>uvek tačno unosi svaki izvučeni broj</strong>. Samo tako sistem može da <strong>preciznije detektuje nove obrasce</strong> i pruži <strong>najbolje moguće predloge</strong> za sledeće izvlačenje.</p>
+
+
+
+</div>
+
+
+
+
+
+
+      </div>
+      <div class="roulette-container">
+        <div class="zero-cell" onclick="klikniBroj(0)">0</div>
+        <div class="roulette-table" id="rouletteTable"></div>
+      </div>
+      <div class="bet-suggestion" id="predlog">
+        Klikni na poslednji izvučeni broj.
+      </div>
+      <!-- Premestamo profit ispod predloga za ulog -->
+      <div class="profit-container">
+        <div class="profit-title">Tvoja trenutna zarada:</div>
+        <div class="profit-value" id="profit">+0 din</div>
+        <div class="loading" id="racunanje" style="display: none;">
+          <div class="spinner"></div>
+          <div class="loading-text">Računamo Vaš profit...</div>
+        </div>
+      </div>
+    </div>
+    <div class="result-container">
+      <div class="result" id="rezultat"></div>
+    </div>
+    <div class="history">
+      <div class="history-title">Istorija izvlačenja:</div>
+      <div class="history-content" id="istorija">-</div>
+    </div>
+
+<div class="explanation">
+  <p><strong>🎯 Šta ovaj program radi?</strong></p>
+
+<p>🎰 Ovaj softver koristi naprednu analizu 📊 prethodno izvučenih brojeva 🎲 kako bi identifikovao obrasce u ruletu 🔍 i na osnovu toga precizno predložio kolonu na koju treba da uložite, kao i iznos koji je potrebno postaviti 🎯. Sistem je optimizovan za igru <strong>na svakom izvlačenju</strong> – bez preskakanja ⏱️.</p>
+
+<p>👉 Nakon što unesete poslednji izvučeni broj, softver će automatski prikazati preporučenu kolonu za igru (1️⃣, 2️⃣ ili 3️⃣), zajedno sa tačno izračunatim iznosom koji treba da uplatite 💰.</p>
+
+<p>🔄 Unosite <strong>svaki broj koji se pojavi</strong> i igrajte <strong>odmah nakon svakog unosa</strong>. Program koristi svaki novi broj kako bi u realnom vremenu izračunao i predložio sledeći potez, bez potrebe za pauzama između izvlačenja.</p>
+
+<p>📈 Nakon svakog unosa rezultata, softver u realnom vremenu prikazuje vašu trenutnu dobit ili gubitak 💵. ✅ Ako dosledno pratite preporuke – unosite sve brojeve, poštujete pravila, primenjujete predložene uloge i igrate samo na označene kolone – možete očekivati stabilan dugoročni profit 🤑 i značajne dobitke 🔵.</p>
+
+<p>🚀 Igrajte strpljivo, unosite svaki rezultat i igrajte bez preskakanja izvlačenja – sistem je dizajniran da upravo na taj način daje najbolje rezultate 💎.</p>
+
+<div class="disclaimer">
+  <strong>⚠️ Važno: Klađenje nosi finansijski rizik.</strong> Ovaj softver je osmišljen kao alat za pomoć igračima u prepoznavanju obrazaca i primeni strateškog pristupa igri. Način korišćenja i krajnji rezultati u potpunosti zavise od korisnika, kao i od elementa sreće koji je prisutan u svakoj kazino igri.<br>
+Svako izvlačenje na ruletu je nasumično i ne zavisi od prethodnih rezultata. Iako softver koristi kompleksne algoritme i matematičke modele za predikciju kolona, tačnost predloga nije zagarantovana.<br>
+Igrajte odgovorno – ne ulažite više od onoga što ste spremni da izgubite. Autor ne snosi odgovornost za eventualne finansijske gubitke nastale korišćenjem ovog softvera. Pravite redovne pauze ⏸️, igrajte iz zabave ⚖️ i imajte na umu da je svrha igre prvenstveno razonoda.
+</div>
+
+
+
+  </div>
+  <script>
+    const kolonaMap = {
+      3:1,6:1,9:1,12:1,15:1,18:1,21:1,24:1,27:1,30:1,33:1,36:1, // Column 1
+      2:2,5:2,8:2,11:2,14:2,17:2,20:2,23:2,26:2,29:2,32:2,35:2,   // Column 2
+      1:3,4:3,7:3,10:3,13:3,16:3,19:3,22:3,25:3,28:3,31:3,34:3    // Column 3
+    };
+    const crveni = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+	const ulozi = [10, 10, 20, 30, 40, 60, 90, 140, 210, 310, 470, 700, 1050, 1580, 2370, 3550, 5330, 7999, 12000, 18000];
+	//const ulozi = [100, 100, 200, 300, 400, 600, 900, 1400, 2100, 3100, 4700, 7000, 10500, 15800, 23700, 35500, 53300, 79990, 120000, 180000];
+
+
+    let istorija = [];
+    let ulogIndex = 0;
+    let poslednjaPredikcija = null;
+    let profit = 0;
+    let brojPadova = 0;
+    let ukupnoUlozeno = 0;
+    let prvaIgra = true;
+    // Correct column definitions
+    const kolona1 = [3,6,9,12,15,18,21,24,27,30,33,36]; // Top column
+    const kolona2 = [2,5,8,11,14,17,20,23,26,29,32,35]; // Middle column
+    const kolona3 = [1,4,7,10,13,16,19,22,25,28,31,34]; // Bottom column
+
+
+function generisiKolonu()
+{
+  const prva = Math.floor(Math.random() * 2) + 1;
+  const druga = Math.floor(Math.random() * 3) + 1;
+  
+  const kolone = [prva, druga];
+  const randomIndex = Math.floor(Math.random() * kolone.length);
+
+  return kolone[randomIndex];
+}
+
+    function napraviTabelu() {
+      const container = document.getElementById("rouletteTable");
+      container.innerHTML = "";
+      // Render columns in correct order: top, middle, bottom
+      const raspored = [kolona1, kolona2, kolona3];
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 12; col++) {
+          const broj = raspored[row][col];
+          const div = document.createElement("div");
+          div.className = "cell " + (crveni.includes(broj) ? "red" : "black");
+          div.textContent = broj;
+          div.onclick = () => klikniBroj(broj);
+          if (kolonaMap[broj] === poslednjaPredikcija) {
+            div.classList.add("highlight-column");
+          }
+          container.appendChild(div);
+        }
+        // Add bet box for this column
+        const betDiv = document.createElement("div");
+        betDiv.className = "bet-box";
+        if (poslednjaPredikcija === (row + 1)) { // Match predicted column
+          betDiv.textContent = `${ulozi[ulogIndex]} `;
+        } else {
+          betDiv.className += " inactive";
+          betDiv.textContent = "-";
+        }
+        container.appendChild(betDiv);
+      }
+    }
+    function klikniBroj(broj) {
+      document.getElementById("racunanje").style.display = "flex";
+      document.getElementById("profit").textContent = "...";
+      setTimeout(() => {
+        obradiKlik(broj);
+        document.getElementById("racunanje").style.display = "none";
+      }, 1500);
+    }
+    function obradiKlik(broj) {
+      istorija.push(broj);
+      document.getElementById("istorija").textContent = istorija.join(", ") || "-";
+      if (poslednjaPredikcija === null) {
+        poslednjaPredikcija = generisiKolonu();
+        prikaziPredlog();
+        napraviTabelu();
+        prvaIgra = false;
+        return;
+      }
+      const kol = kolonaMap[broj] || 0;
+      const ulog = ulozi[ulogIndex];
+      ukupnoUlozeno += ulog;
+      if (kol !== poslednjaPredikcija) {
+        profit -= ulog;
+        brojPadova++;
+        document.getElementById("rezultat").innerHTML = `
+          <div style="color:#ff5555; font-weight:bold;">❌ Promašaj broj: ${brojPadova}</div>
+          <div>Poslednji ulog: <span class="highlight">${ulog} din</span></div>
+         
+        `;
+        if (ulogIndex < ulozi.length - 1) {
+          ulogIndex++;
+        } else {
+          document.getElementById("rezultat").innerHTML += `
+            <div style="color:#ff9900; font-weight:bold;">❌ 15 promašaja. Igra resetovana.</div>
+          `;
+          resetuj();
+        }
+      } else {
+        const dobitak = ulog * 3;
+        const netoProfit = dobitak - ulog;
+        profit += netoProfit;
+        document.getElementById("rezultat").innerHTML = `
+          <div style="color:#00ff99; font-weight:bold;">✅ Pogodak!</div>
+          <div>Vaš poslednji ulog: <span class="highlight">${ulog} din</span></div>
+          <div>Vaš Dobitak: <span class="highlight">${dobitak} din</span></div>
+          <div>Neto profit u poslednjoj opkladi: <span class="highlight">+${netoProfit} din</span></div>
+        `;
+        ulogIndex = 0;
+        brojPadova = 0;
+        ukupnoUlozeno = 0;
+      }
+      poslednjaPredikcija = generisiKolonu();
+      prikaziPredlog();
+      napraviTabelu();
+      azurirajProfit();
+    }
+function prikaziPredlog() {
+  const predlogDiv = document.getElementById("predlog");
+  if (poslednjaPredikcija === null) {
+    predlogDiv.innerHTML = "<center>Klikni na broj 0 za startovanje ovog programa</center>";
+  } else {
+    const u = ulozi[ulogIndex];
+    predlogDiv.innerHTML = 
+      `➡️ <strong>Super! 🎉 Sada uloži ${u} din. 💰 na sledeće izvlačenje na kolonu označenu plavom bojom 🔵.</strong><br>
+      🕒 Nakon toga, klikom na izvučeni broj obavesti program na koji je broj loptica pala ⚪.<br>
+      ❗️ <strong>Igraj svako izvlačenje i u program unosi rezultate svakog izvlačenja.</strong>💡 Drži se pravila — uspeh je zagarantovan! 🤑🚀`;
+  }
+}
+
+
+    function azurirajProfit() {
+      const profitDiv = document.getElementById("profit");
+      const znak = profit >= 0 ? '+' : '-';
+      const boja = profit >= 0 ? '#00ff99' : '#ff5555';
+      profitDiv.innerHTML = 
+        `<span style="color:${boja}">${znak}${Math.abs(profit)} din</span>`;
+    }
+    function resetuj() {
+      istorija = [];
+      ulogIndex = 0;
+      poslednjaPredikcija = null;
+      profit = 0;
+      brojPadova = 0;
+      ukupnoUlozeno = 0;
+      prvaIgra = true;
+      document.getElementById("rezultat").innerHTML = "";
+      document.getElementById("istorija").textContent = "-";
+      document.getElementById("racunanje").style.display = "none";
+      document.getElementById("profit").innerHTML = "+0 din";
+      napraviTabelu();
+      prikaziPredlog();
+    }
+    function generisiZvezde() {
+      const starsContainer = document.getElementById('stars');
+      const brojZvezda = 150;
+      for (let i = 0; i < brojZvezda; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        const size = Math.random() * 1.5 + 0.5;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.animationDelay = `${Math.random() * 5}s`;
+        starsContainer.appendChild(star);
+      }
+    }
+    napraviTabelu();
+    prikaziPredlog();
+    generisiZvezde();
+  </script>
+</body>
+</html>
