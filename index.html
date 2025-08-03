@@ -338,10 +338,8 @@
 
 <div class="warning">
 
-  <p>💼 <strong>Preporučeni fond za igru:</strong> 20.000 RSD</p>
-  <p>💥 <strong>Moguća mesečna zarada:</strong> do 500.000 RSD</p>
+  <p>💼 <strong>Preporučeni fond za igru:</strong> 20.000 RSD | 💥 <strong>Moguća mesečna zarada:</strong> do 500.000 RSD</p>
 
-   <p>   ✅ Igra se na SVAKO izvlačenje – program predlaže moguću sledeću kolonu na osnovu istorije brojeva.  </p>
   </ul>
 
 </div>
@@ -376,7 +374,7 @@
       </div>
       <!-- Premestamo profit ispod predloga za ulog -->
       <div class="profit-container">
-        <div class="profit-title">Tvoja trenutna zarada:</div>
+        <div class="profit-title">Trenutna zarada:</div>
         <div class="profit-value" id="profit">+0 din</div>
         <div class="loading" id="racunanje" style="display: none;">
           <div class="spinner"></div>
@@ -532,7 +530,7 @@ function generisiKolonu() {
 function prikaziPredlog() {
   const predlogDiv = document.getElementById("predlog");
   if (poslednjaPredikcija === null) {
-    predlogDiv.innerHTML = "<center>Klikni na broj 0 za startovanje ovog programa</center>";
+    predlogDiv.innerHTML = "<center>Klikni na bilo koji broj za pokretanje ovog softvera.</center>";
   } else {
     const u = ulozi[ulogIndex];
     predlogDiv.innerHTML = 
@@ -586,4 +584,5 @@ function prikaziPredlog() {
   </script>
 </body>
 </html>
+
 
