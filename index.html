@@ -437,10 +437,41 @@ Igrajte odgovorno – ne ulažite više od onoga što ste spremni da izgubite. A
 
 
 function generisiKolonu() {
-  const moguceKolone = [2, 3, 1];
-  const randomIndex = Math.floor(Math.random() * moguceKolone.length);
-  return moguceKolone[randomIndex];
+  const kolone = [
+[2, 3, 1],
+[1, 3, 2],
+[3, 2, 1],
+[2, 1, 3],
+[3, 1, 2],
+[1, 2, 3],
+[3, 2, 1],
+[2, 1, 3],
+[1, 3, 2],
+
+  ];
+
+  // Inicijalizuj indekse ako nisu već postavljeni
+  if (typeof generisiKolonu.kolonaIndex === "undefined") {
+    generisiKolonu.kolonaIndex = 0;
+    generisiKolonu.brojIndex = 0;
+  }
+
+  const trenutnaKolona = kolone[generisiKolonu.kolonaIndex];
+  const broj = trenutnaKolona[generisiKolonu.brojIndex];
+
+  // Pomeri se na sledeći broj unutar kolone
+  generisiKolonu.brojIndex++;
+
+  // Ako je cela kolona prošla, idi na sledeću kolonu
+  if (generisiKolonu.brojIndex >= trenutnaKolona.length) {
+    generisiKolonu.brojIndex = 0;
+    generisiKolonu.kolonaIndex = (generisiKolonu.kolonaIndex + 1) % kolone.length;
+  }
+
+  return broj;
 }
+
+
 
     function napraviTabelu() {
       const container = document.getElementById("rouletteTable");
@@ -584,6 +615,7 @@ function prikaziPredlog() {
   </script>
 </body>
 </html>
+
 
 
 
