@@ -435,32 +435,10 @@ Igrajte odgovorno – ne ulažite više od onoga što ste spremni da izgubite. A
     const kolona2 = [2,5,8,11,14,17,20,23,26,29,32,35]; // Middle column
     const kolona3 = [1,4,7,10,13,16,19,22,25,28,31,34]; // Bottom column
 
-
 function generisiKolonu() {
-  const kolone = [
-[2, 2, 3],
-
-  ];
-
-  // Inicijalizuj indekse ako nisu već postavljeni
-  if (typeof generisiKolonu.kolonaIndex === "undefined") {
-    generisiKolonu.kolonaIndex = 0;
-    generisiKolonu.brojIndex = 0;
-  }
-
-  const trenutnaKolona = kolone[generisiKolonu.kolonaIndex];
-  const broj = trenutnaKolona[generisiKolonu.brojIndex];
-
-  // Pomeri se na sledeći broj unutar kolone
-  generisiKolonu.brojIndex++;
-
-  // Ako je cela kolona prošla, idi na sledeću kolonu
-  if (generisiKolonu.brojIndex >= trenutnaKolona.length) {
-    generisiKolonu.brojIndex = 0;
-    generisiKolonu.kolonaIndex = (generisiKolonu.kolonaIndex + 1) % kolone.length;
-  }
-
-  return broj;
+  const kolona = [3, 1, 2];
+  generisiKolonu.index = (generisiKolonu.index || 0) % kolona.length;
+  return kolona[generisiKolonu.index++];
 }
 
 
