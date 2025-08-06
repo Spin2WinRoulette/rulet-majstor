@@ -310,25 +310,40 @@
       line-height: 1.6;
     }
   </style>
-  <script>
-    // Lozinka prompt pre prikaza sajta
-    document.addEventListener("DOMContentLoaded", function() {
-      let lozinka = "";
-      while(lozinka !== "ruletko2580"){
-        lozinka = prompt("Unesite lozinku za pristup sajtu:");
-        if(lozinka === null){
-          alert("Pristup odbijen.");
-          document.body.innerHTML = "<h2 style='color:red; text-align:center; margin-top:20vh;'>Pristup sajtu odbijen.</h2>";
-          return;
-        }
-        if(lozinka !== "ruletko2580"){
-          alert("Netačna lozinka!");
-        }
-      }
-    });
-  </script>
+
 </head>
 <body>
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rulet Majstor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', 'Arial', sans-serif; background: #000; color: #fff; padding: 20px; min-height: 100vh; position: relative; overflow-x: hidden; }
+    #loginContainer { background-color: #1e1e1e; border: 1px solid #444; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; margin: 20vh auto 0; box-shadow: 0 0 15px rgba(0,242,255,0.2); text-align: center; }
+    .password-wrapper { position: relative; width: 100%; display: inline-block; }
+    .password-wrapper input { width: 80%; padding: 10px; font-size: 16px; border: 1px solid #444; background: #222; color: #fff; border-radius: 6px; }
+    .toggle-password { position: absolute; right: 10%; top: 50%; transform: translateY(-50%); cursor: pointer; color: #ccc; font-size: 18px; }
+    #loginContainer button { background: #00f2ff; color: #000; border: none; padding: 10px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+    #loginContainer button:hover { background: #00a2ff; }
+  </style>
+</head>
+<body>
+  <div id="loginContainer">
+    <h2>🔐 Unesite lozinku za pristup</h2>
+    <form onsubmit="event.preventDefault(); proveriLozinku();">
+      <div class="password-wrapper">
+        <input type="password" id="lozinkaInput" placeholder="Lozinka" />
+        <span class="toggle-password" onclick="togglePassword()">👁️</span>
+      </div>
+      <button type="submit">Pristupi</button>
+      <p id="loginError" style="color:red; margin-top:10px;"></p>
+    </form>
+  </div>
+  <div id="sadrzaj" style="display:none;">
+
 
   <div class="stars" id="stars"></div>
   <div class="container">
@@ -592,3 +607,35 @@ function prikaziPredlog() {
 
 
 
+
+
+  </div>
+  <script>
+// Dodavanje više lozinki: samo dodaj nove ključeve u objekat
+const dozvoljeneLozinke = {
+  "ruletko2580": true,
+  "badnjar8148": true,
+  // Primer novih lozinki:
+  "kupac3-456": true,
+  "kupac4-789": true,
+
+};
+
+    function proveriLozinku() {
+      const loz = document.getElementById("lozinkaInput").value.trim();
+      if (dozvoljeneLozinke[loz]) {
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("sadrzaj").style.display = "block";
+      } else {
+        document.getElementById("loginError").textContent = "❌ Pogrešna lozinka.";
+      }
+    }
+    function togglePassword() {
+      const inp = document.getElementById("lozinkaInput");
+      const ico = document.querySelector(".toggle-password");
+      if (inp.type === "password") { inp.type = "text"; ico.textContent = "🙈"; }
+      else { inp.type = "password"; ico.textContent = "👁️"; }
+    }
+  </script>
+</body>
+</html>
